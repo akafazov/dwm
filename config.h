@@ -62,7 +62,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "gnome-terminal", NULL };
+static const char *termcmd[]  = { "i3-sensible-terminal", NULL };
 static const char *googlechromecmd[] = { "google-chrome-stable", NULL };
 
 static const Key keys[] = {
