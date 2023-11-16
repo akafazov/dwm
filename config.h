@@ -64,6 +64,8 @@ static const Layout layouts[] = {
 static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "i3-sensible-terminal", NULL };
 static const char *googlechromecmd[] = { "google-chrome-stable", NULL };
+static const char *refreshcmd[] = { "kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')", NULL };
+static const char *logoutcmd[] = { "pgrep -f '/home/akafazov/.local/bin/dwmstart.sh'| xargs -I {} kill {}", NULL };
 
 #include <X11/XF86keysym.h>
 
@@ -102,10 +104,15 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
-        { 0,                            XF86XK_AudioRaiseVolume,    spawn,      SHCMD("pactl set-sink-volume @DEFAULT_SINK@ +5%") },
-        { 0,                            XF86XK_AudioLowerVolume,    spawn,      SHCMD("pactl set-sink-volume @DEFAULT_SINK@ -5%") },
-        { 0,                            XF86XK_AudioMute,           spawn,      SHCMD("pactl set-sink-mute @DEFAULT_SINK@ toggle") },
+	{ MODKEY|ShiftMask,             XK_q,      spawn,          {.v = logoutcmd } },
+        { MODKEY|Mod1Mask,              XK_q,      quit,           {0} },
+        { 0,                            XF86XK_AudioRaiseVolume,    spawn,      SHCMD("pactl set-sink-volume @DEFAULT_SINK@ +5% && kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')") },
+        { 0,                            XF86XK_AudioLowerVolume,    spawn,      SHCMD("pactl set-sink-volume @DEFAULT_SINK@ -5% && kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')") },
+        { 0,                            XF86XK_AudioMute,           spawn,      SHCMD("pactl set-sink-mute @DEFAULT_SINK@ toggle && kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')") },
+        { 0,                            XF86XK_AudioRaiseVolume,    spawn,      {.v = refreshcmd } },
+        { 0,                            XF86XK_AudioLowerVolume,    spawn,      {.v = refreshcmd } },
+        { 0,                            XF86XK_AudioMute,           spawn,      {.v = refreshcmd } },
+        { ShiftMask,                    Mod1Mask,                   spawn,      {.v = refreshcmd } },
 
 };
 
