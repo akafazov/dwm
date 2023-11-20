@@ -66,6 +66,8 @@ static const char *termcmd[]  = { "i3-sensible-terminal", NULL };
 static const char *googlechromecmd[] = { "google-chrome-stable", NULL };
 static const char *refreshcmd[] = { "kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')", NULL };
 static const char *logoutcmd[] = { "pgrep -f '/home/akafazov/.local/bin/dwmstart.sh'| xargs -I {} kill {}", NULL };
+static const char *filecmd[] = { "dolphin", NULL };
+static const char *lockcmd[] = { "slock", NULL };
 
 #include <X11/XF86keysym.h>
 
@@ -86,6 +88,7 @@ static const Key keys[] = {
         { MODKEY,                       XK_c,      spawn,          {.v = googlechromecmd } },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY|ShiftMask,             XK_f,      setlayout,      {.v = filecmd } },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
@@ -106,6 +109,7 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      spawn,          {.v = logoutcmd } },
         { MODKEY|Mod1Mask,              XK_q,      quit,           {0} },
+        { Mod1Mask|ControlMask,         XK_Delete,                  spawn,      {.v = lockcmd } },
         { 0,                            XF86XK_AudioRaiseVolume,    spawn,      SHCMD("pactl set-sink-volume @DEFAULT_SINK@ +5% && kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')") },
         { 0,                            XF86XK_AudioLowerVolume,    spawn,      SHCMD("pactl set-sink-volume @DEFAULT_SINK@ -5% && kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')") },
         { 0,                            XF86XK_AudioMute,           spawn,      SHCMD("pactl set-sink-mute @DEFAULT_SINK@ toggle && kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')") },
