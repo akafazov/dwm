@@ -3,7 +3,7 @@
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
+static const unsigned int systraypinning = 1;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayonleft = 0;    /* 0: systray in the right corner, >0: systray on left of status text */
 static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
@@ -62,12 +62,21 @@ static const Layout layouts[] = {
 
 /* commands */
 static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
-static const char *termcmd[]  = { "st", NULL };
+static const char *termcmd[]  = { "i3-sensible-terminal", NULL };
+static const char *googlechromecmd[] = { "google-chrome-stable", NULL };
+static const char *refreshcmd[] = { "kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')", NULL };
+static const char *logoutcmd[] = { "pgrep -f '/home/akafazov/.local/bin/dwmstart.sh'| xargs -I {} kill {}", NULL };
+static const char *filecmd[] = { "dolphin", NULL };
+static const char *lockcmd[] = { "slock", NULL };
+static const char *brightness_up[]  =   { "/usr/bin/brightnessctl set 200+", NULL };
+static const char *brightness_down[]  = { "/usr/bin/brightnessctl set 200-", NULL };
+
+#include <X11/XF86keysym.h>
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -75,11 +84,13 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY,                       XK_Return, zoom,           {0} },
+	{ MODKEY|ShiftMask,             XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+	{ MODKEY,                       XK_q,      killclient,     {0} },
+        { MODKEY,                       XK_c,      spawn,          {.v = googlechromecmd } },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY|ShiftMask,             XK_f,      setlayout,      {.v = filecmd } },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
@@ -98,7 +109,20 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ShiftMask,             XK_q,      spawn,          {.v = logoutcmd } },
+        { MODKEY|Mod1Mask,              XK_q,      quit,           {0} },
+        { Mod1Mask|ControlMask,         XK_Delete,                  spawn,      {.v = lockcmd } },
+        { 0,                            XF86XK_AudioRaiseVolume,    spawn,      SHCMD("pactl set-sink-volume @DEFAULT_SINK@ +5% && kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')") },
+        { 0,                            XF86XK_AudioLowerVolume,    spawn,      SHCMD("pactl set-sink-volume @DEFAULT_SINK@ -5% && kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')") },
+        { 0,                            XF86XK_AudioMute,           spawn,      SHCMD("pactl set-sink-mute @DEFAULT_SINK@ toggle && kill $(ps ax|grep 'sleep 1m'|grep -v grep| awk '{print $1}')") },
+        { 0,                            XF86XK_AudioRaiseVolume,    spawn,      {.v = refreshcmd } },
+        { 0,                            XF86XK_AudioLowerVolume,    spawn,      {.v = refreshcmd } },
+        { 0,                            XF86XK_AudioMute,           spawn,      {.v = refreshcmd } },
+        { ShiftMask,                    Mod1Mask,                   spawn,      {.v = refreshcmd } },
+        { 0,                            XF86XK_MonBrightnessUp,     spawn,      {.v = brightness_up } },
+        { 0,                            XF86XK_MonBrightnessDown,   spawn,      {.v = brightness_down } },
+//        { 0,                            XKB_KEY_XF86MonBrightnessUp,   spawn, {.v = brightness_up } },
+//        { 0,                            XKB_KEY_XF86MonBrightnessDown, spawn, {.v = brightness_down } },
 };
 
 /* button definitions */

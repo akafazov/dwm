@@ -68,6 +68,8 @@ static const char *refreshcmd[] = { "kill $(ps ax|grep 'sleep 1m'|grep -v grep| 
 static const char *logoutcmd[] = { "pgrep -f '/home/akafazov/.local/bin/dwmstart.sh'| xargs -I {} kill {}", NULL };
 static const char *filecmd[] = { "dolphin", NULL };
 static const char *lockcmd[] = { "slock", NULL };
+static const char *brightness_up[]  =   { "/usr/bin/brightnessctl set 200+", NULL };
+static const char *brightness_down[]  = { "/usr/bin/brightnessctl set 200-", NULL };
 
 #include <X11/XF86keysym.h>
 
@@ -82,7 +84,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	/* { MODKEY,                       XK_Return, zoom,           {0} }, */
+	{ MODKEY|ShiftMask,             XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY,                       XK_q,      killclient,     {0} },
         { MODKEY,                       XK_c,      spawn,          {.v = googlechromecmd } },
@@ -117,7 +119,10 @@ static const Key keys[] = {
         { 0,                            XF86XK_AudioLowerVolume,    spawn,      {.v = refreshcmd } },
         { 0,                            XF86XK_AudioMute,           spawn,      {.v = refreshcmd } },
         { ShiftMask,                    Mod1Mask,                   spawn,      {.v = refreshcmd } },
-
+        { 0,                            XF86XK_MonBrightnessUp,     spawn,      {.v = brightness_up } },
+        { 0,                            XF86XK_MonBrightnessDown,   spawn,      {.v = brightness_down } },
+//        { 0,                            XKB_KEY_XF86MonBrightnessUp,   spawn, {.v = brightness_up } },
+//        { 0,                            XKB_KEY_XF86MonBrightnessDown, spawn, {.v = brightness_down } },
 };
 
 /* button definitions */
